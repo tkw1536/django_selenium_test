@@ -55,6 +55,9 @@ class ElementFindMixins(DummyTestBase):
         if timeout is None:
             timeout = self.__class__.find_element_timeout
         if selector is None:
+            print(self.__class__.find_element_selector)
+            if self.__class__.find_element_selector is None:
+                raise Exception("find_element_selector may not be None")
             selector = self.__class__.find_element_selector
 
         wait = WebDriverWait(self.selenium, timeout)
@@ -437,7 +440,7 @@ class IntegrationTestBase(
     live_server_url: str = None
 
     find_element_timeout: int = 10
-    find_element_selector = None  # to be overwritten by subclass
+    find_element_selector: str  # to be overwritten by subclass
 
     def login(self, username: str) -> User:
         """ Authenticates the user with the given username and returns the user object """
@@ -446,7 +449,7 @@ class IntegrationTestBase(
         user = get_user_model().objects.get(username=username)
 
         # and force the login
-        self.selenium.force_login(user)
+        self.selenium.force_login(user, base_url=self.live_server_url)
 
         # return the user
         return user

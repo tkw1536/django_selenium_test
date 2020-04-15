@@ -79,7 +79,7 @@ class DjangoSeleniumCleanTestCase(SeleniumTestCase):
         self.assertEqual(self.user_info.text, "No user is logged on.")
 
         # Log on
-        r = self.selenium.force_login(alice)
+        r = self.selenium.force_login(alice, base_url=self.live_server_url)
         self.assertIsNone(r)
 
         # Verify we are logged on

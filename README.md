@@ -219,13 +219,16 @@ methods`_, but you will mostly use ``get()``. It also has the
 following additional methods:
 
 * ``self.selenium.login(**credentials)``,
-``self.selenium.force_login(user, backend=None)``,
+``self.selenium.force_login(user, base_url)``,
 ``self.selenium.logout()``
 
   Similar to the Django test client ``login()``, ``force_login()`` and
   ``logout()`` methods.  ``login()`` returns ``True`` if login is
   possible; ``False`` if the provided credentials are incorrect, or the
   user is inactive, or if the sessions framework is not available.
+
+  The `force_login()` code was adapted from [django-selenium-login](https://github.com/feffe/django-selenium-login/blob/master/seleniumlogin/__init__.py),
+  which is licensed under the MIT License. 
 
 * ``self.selenium.wait_until_n_windows(n, timeout=2)``
 
@@ -243,7 +246,7 @@ self.selenium.switch_to_window(windows[1])
   If the timeout (in seconds) elapses and the number of browser
   windows never becomes ``n``, an ``AssertionError`` is raised.
 
-.. _selenium driver attributes and methods: http://selenium-python.readthedocs.org/api.html#module-selenium.webdriver.remote.webdriver
+- [selenium driver attributes and methods](http://selenium-python.readthedocs.org/api.html#module-selenium.webdriver.remote.webdriver)
 
 PageElement objects
 -------------------

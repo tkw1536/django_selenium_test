@@ -7,6 +7,7 @@ from importlib import import_module
 from typing import TYPE_CHECKING
 
 from django.conf import settings
+from django.contrib.auth import BACKEND_SESSION_KEY, HASH_SESSION_KEY, SESSION_KEY
 from django.contrib.staticfiles.testing import StaticLiveServerTestCase
 from django.http import HttpRequest
 
@@ -76,7 +77,7 @@ class SeleniumWrapper(object):
         else:
             return False
 
-    def force_login(self, user: AbstractUser, backend: Optional[str] = None) -> None:
+    def force_login(self, user: AbstractUser, base_url: str) -> None:
         """
         Sets selenium to appear as if a user has successfully signed in.
 
@@ -86,21 +87,55 @@ class SeleniumWrapper(object):
         provided. The authenticate() function called by login() normally
         annotates the user like this.
 
-        The code is based on django.test.client.Client.force_login.
+        The code is based on https://github.com/feffe/django-selenium-login/blob/master/seleniumlogin/__init__.py. 
         """
 
-        def get_backend():
-            from django.contrib.auth import load_backend
+        # The original code was licensed under:
+        #
+        #
+        # MIT License
+        #
+        # Copyright (c) 2016 Fredrik Westermark
+        #
+        # Permission is hereby granted, free of charge, to any person obtaining a copy
+        # of this software and associated documentation files (the "Software"), to deal
+        # in the Software without restriction, including without limitation the rights
+        # to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+        # copies of the Software, and to permit persons to whom the Software is
+        # furnished to do so, subject to the following conditions:
+        #
+        # The above copyright notice and this permission notice shall be included in all
+        # copies or substantial portions of the Software.
+        #
+        # THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+        # IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+        # FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+        # AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+        # LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+        # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+        # SOFTWARE.
+        #
+        from django.conf import settings
 
-            for backend_path in settings.AUTHENTICATION_BACKENDS:
-                backend = load_backend(backend_path)
-                if hasattr(backend, "get_user"):
-                    return backend_path
+        SessionStore = import_module(settings.SESSION_ENGINE).SessionStore
+        selenium_login_start_page = getattr(
+            settings, "SELENIUM_LOGIN_START_PAGE", "/page_404/"
+        )
+        self.driver.get("{}{}".format(base_url, selenium_login_start_page))
 
-        if backend is None:
-            backend = get_backend()
-        user.backend = backend
-        self._login(user, backend)
+        session = SessionStore()
+        session[SESSION_KEY] = user.id
+        session[BACKEND_SESSION_KEY] = settings.AUTHENTICATION_BACKENDS[0]
+        session[HASH_SESSION_KEY] = user.get_session_auth_hash()
+        session.save()
+
+        cookie = {
+            "name": settings.SESSION_COOKIE_NAME,
+            "value": session.session_key,
+            "path": "/",
+        }
+        self.driver.add_cookie(cookie)
+        self.driver.refresh()
 
     def _login(self, user: AbstractUser, backend: Optional[str] = None) -> None:
         from django.contrib.auth import login
