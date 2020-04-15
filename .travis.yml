@@ -5,7 +5,7 @@ python:
   - "3.8"
 
 install:
-  - pip install -q "Django$DJANGO_VERSION"
+  - pip install "Django$DJANGO_VERSION"
   - pip install -r requirements-dev.txt
 
   - if [ "$SELENIUM_WEBDRIVER" == "chrome" ]; then wget https://chromedriver.storage.googleapis.com/LATEST_RELEASE; fi
@@ -40,10 +40,14 @@ jobs:
      <<: *firefox_job
    - env: DJANGO_VERSION=">=2.2,<3" SELENIUM_WEBDRIVER=firefox
      <<: *firefox_job
+   - env: DJANGO_VERSION=">=3.0,<3.1" SELENIUM_WEBDRIVER=firefox
+     <<: *firefox_job
 
    - env: DJANGO_VERSION=">=2.0,<2.1" SELENIUM_WEBDRIVER=chrome
      <<: *chrome_job
    - env: DJANGO_VERSION=">=2.1,<2.2" SELENIUM_WEBDRIVER=chrome
      <<: *chrome_job
    - env: DJANGO_VERSION=">=2.2,<3" SELENIUM_WEBDRIVER=chrome
+     <<: *chrome_job
+   - env: DJANGO_VERSION=">=3.0,<3.1" SELENIUM_WEBDRIVER=chrome
      <<: *chrome_job

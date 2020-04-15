@@ -24,7 +24,7 @@ setup(
         "Topic :: Software Development :: Testing",
     ],
     name="django-selenium-test",
-    version="1.0.1",
+    version="1.0.2",
     license="BSD 3-Clause License",
     description="Write clean Selenium tests in Django",
     author="Tom Wiesing",
@@ -33,6 +33,6 @@ setup(
     author_email="tkw01536@gmail.com",
     url="https://github.com/tkw1536/django_selenium_test",
     packages=find_packages(),
-    install_requires=["django>=2.0,<3", "selenium>=2.40,<4"],
+    install_requires=["django>=2.0,<3.1", "selenium>=2.40,<4"],
     test_suite="tests.tests",
 )
