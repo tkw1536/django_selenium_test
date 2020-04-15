@@ -1,0 +1,41 @@
+<html>
+    <head>
+        <title>Page Title</title>
+    </head>
+    <body>
+        <main>
+            <div id="test">Test Element</div>
+            <div id="test_next">Test Next Element</div>
+
+            <div id="exists">Element exists</div>
+            <!-- <div id="not_exists">Element does not exist</div> -->
+
+            <div id="displayed">Test Displayed</div>
+            <div id="not_displayed" style="display: none; ">Test Not Displayed</div>
+
+            <form method="post">
+                {% csrf_token %}
+                {{ form }}
+                <input type="submit" id="input_id_submit" value="Submit">
+            </form>
+
+            <form method="post" action="/integration/file/">
+                {% csrf_token %}
+                <input type="submit" id="input_id_download" value="Submit">
+            </form>
+
+            <div id="hoverable">
+                Some text
+                <br />
+                <br />
+                <br />
+            </div>
+
+            <script>
+                document.getElementById("hoverable").onmouseenter = function(){
+                    this.setAttribute("data-hovered", "true");
+                }
+            </script>
+        </main>
+    </body>
+</html>

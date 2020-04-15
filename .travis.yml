@@ -1,41 +1,49 @@
 dist: xenial
-
 language: python
 
 python:
- - "2.7"
- - "3.5"
- - "3.6"
-
-addons:
-  chrome: stable
+  - "3.8"
 
 install:
- - pip install -q "Django$DJANGO_VERSION"
- - pip install isort flake8
- - pip install codecov
- - wget https://chromedriver.storage.googleapis.com/LATEST_RELEASE
- - wget https://chromedriver.storage.googleapis.com/`cat LATEST_RELEASE`/chromedriver_linux64.zip
- - sudo unzip chromedriver_linux64.zip -d /usr/local/bin
+  - pip install -q "Django$DJANGO_VERSION"
+  - pip install -r requirements-dev.txt
+
+  - if [ "$SELENIUM_WEBDRIVER" == "chrome" ]; then wget https://chromedriver.storage.googleapis.com/LATEST_RELEASE; fi
+  - if [ "$SELENIUM_WEBDRIVER" == "chrome" ]; then wget https://chromedriver.storage.googleapis.com/`cat LATEST_RELEASE`/chromedriver_linux64.zip; fi
+  - if [ "$SELENIUM_WEBDRIVER" == "chrome" ]; then unzip chromedriver_linux64.zip -d chromedriver; fi
+  - if [ "$SELENIUM_WEBDRIVER" == "chrome" ]; then chmod +x chromedriver/chromedriver; fi
+  - if [ "$SELENIUM_WEBDRIVER" == "chrome" ]; then export PATH=$PATH:$PWD/chromedriver; fi
+
+  - if [ "$SELENIUM_WEBDRIVER" == "firefox" ]; then export GECKODRIVER_VERSION=v0.26.0; fi
+  - if [ "$SELENIUM_WEBDRIVER" == "firefox" ]; then wget https://github.com/mozilla/geckodriver/releases/download/$GECKODRIVER_VERSION/geckodriver-$GECKODRIVER_VERSION-linux64.tar.gz ; fi
+  - if [ "$SELENIUM_WEBDRIVER" == "firefox" ]; then mkdir geckodriver ; fi
+  - if [ "$SELENIUM_WEBDRIVER" == "firefox" ]; then tar -xzf geckodriver-$GECKODRIVER_VERSION-linux64.tar.gz -C geckodriver ; fi
+  - if [ "$SELENIUM_WEBDRIVER" == "firefox" ]; then export PATH=$PATH:$PWD/geckodriver ; fi
 
 script:
- - if python -c "import sys; exit(not (sys.version >= '3.6'))"; then pip install black; black --check .; fi
- - flake8 --max-line-length=88
- - isort --recursive --check-only --diff *.py django_selenium_clean tests
+ - black --check .
+ - isort --recursive --check-only --diff *.py django_selenium_test tests
  - coverage run --include="./*" --omit="./tests/*" setup.py test
 
-env:
- global:
-   - SELENIUM_WEBDRIVER=headless
- matrix:
-   - DJANGO_VERSION=">=1.11,<2"
-   - DJANGO_VERSION=">=2.2,<3"
+_firefox_job: &firefox_job
+  addons:
+    firefox: latest
+_chrome_job: &chrome_job
+  addons:
+    chrome: stable
 
-after_success:
- - codecov
+jobs:
+ include:
+   - env: DJANGO_VERSION=">=2.0,<2.1" SELENIUM_WEBDRIVER=firefox
+     <<: *firefox_job
+   - env: DJANGO_VERSION=">=2.1,<2.2" SELENIUM_WEBDRIVER=firefox
+     <<: *firefox_job
+   - env: DJANGO_VERSION=">=2.2,<3" SELENIUM_WEBDRIVER=firefox
+     <<: *firefox_job
 
-matrix:
- exclude:
- # Django 2.2 doesn't run on Python 2.7
- - python: "2.7"
-   env: DJANGO_VERSION=">=2.2,<3"
+   - env: DJANGO_VERSION=">=2.0,<2.1" SELENIUM_WEBDRIVER=chrome
+     <<: *chrome_job
+   - env: DJANGO_VERSION=">=2.1,<2.2" SELENIUM_WEBDRIVER=chrome
+     <<: *chrome_job
+   - env: DJANGO_VERSION=">=2.2,<3" SELENIUM_WEBDRIVER=chrome
+     <<: *chrome_job

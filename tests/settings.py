@@ -2,7 +2,8 @@ import os
 from tempfile import NamedTemporaryFile
 
 from selenium import webdriver
-from selenium.webdriver.chrome.options import Options as ChromeOptions
+
+from django_selenium_test.settings import make_chrome_driver, make_firefox_driver
 
 DEBUG = False
 
@@ -44,18 +45,10 @@ TEMPLATES = [
     }
 ]
 
-headless = ChromeOptions()
-headless.add_argument("--headless")
 
+headless = os.environ.get("SELENIUM_HEADLESS") != "0"
 SELENIUM_WEBDRIVERS = {
-    "default": {
-        "callable": webdriver.__dict__[os.environ.get("SELENIUM_BROWSER", "Chrome")],
-        "args": [],
-        "kwargs": {},
-    },
-    "headless": {
-        "callable": webdriver.Chrome,
-        "args": [],
-        "kwargs": {"options": headless},
-    },
+    "default": make_chrome_driver([], {}, headless=headless),
+    "chrome": make_chrome_driver([], {}, headless=headless),
+    "firefox": make_firefox_driver([], {}, headless=headless),
 }

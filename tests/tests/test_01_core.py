@@ -1,4 +1,3 @@
-import os
 from unittest import SkipTest
 
 import django
@@ -8,7 +7,7 @@ from django.test import TestCase, override_settings
 from selenium.common.exceptions import TimeoutException
 from selenium.webdriver.common.by import By
 
-from django_selenium_clean import PageElement, SeleniumTestCase
+from django_selenium_test import PageElement, SeleniumTestCase
 
 
 class DjangoSeleniumCleanTestCase(SeleniumTestCase):
@@ -23,8 +22,11 @@ class DjangoSeleniumCleanTestCase(SeleniumTestCase):
     togglable = PageElement(By.ID, "togglable")
     message = PageElement(By.ID, "message")
 
+    def _load_core_page(self):
+        self.selenium.get(self.live_server_url + "/core")
+
     def test_toggle(self):
-        self.selenium.get(self.live_server_url)
+        self._load_core_page()
 
         # Check that "Greetings to earth" is visible
         self.assertTrue(self.heading_earth.is_displayed())
@@ -55,7 +57,7 @@ class DjangoSeleniumCleanTestCase(SeleniumTestCase):
         )
 
         # Verify we aren't logged on
-        self.selenium.get(self.live_server_url)
+        self._load_core_page()
         self.user_info.wait_until_is_displayed()
         self.assertEqual(self.user_info.text, "No user is logged on.")
 
@@ -64,7 +66,7 @@ class DjangoSeleniumCleanTestCase(SeleniumTestCase):
         self.assertTrue(r)
 
         # Verify we are logged on
-        self.selenium.get(self.live_server_url)
+        self._load_core_page()
         self.user_info.wait_until_is_displayed()
         self.assertEqual(self.user_info.text, "The logged on user is alice.")
 
@@ -72,7 +74,7 @@ class DjangoSeleniumCleanTestCase(SeleniumTestCase):
         self.selenium.logout()
 
         # Verify we are logged out
-        self.selenium.get(self.live_server_url)
+        self._load_core_page()
         self.user_info.wait_until_is_displayed()
         self.assertEqual(self.user_info.text, "No user is logged on.")
 
@@ -81,7 +83,7 @@ class DjangoSeleniumCleanTestCase(SeleniumTestCase):
         self.assertIsNone(r)
 
         # Verify we are logged on
-        self.selenium.get(self.live_server_url)
+        self._load_core_page()
         self.user_info.wait_until_is_displayed()
         self.assertEqual(self.user_info.text, "The logged on user is alice.")
 
@@ -89,12 +91,12 @@ class DjangoSeleniumCleanTestCase(SeleniumTestCase):
         self.selenium.logout()
 
         # Verify we are logged out
-        self.selenium.get(self.live_server_url)
+        self._load_core_page()
         self.user_info.wait_until_is_displayed()
         self.assertEqual(self.user_info.text, "No user is logged on.")
 
     def test_wait_until_n_windows(self):
-        self.selenium.get(self.live_server_url)
+        self._load_core_page()
 
         # Waiting for two windows should fail as there's only one
         with self.assertRaises(AssertionError):
@@ -110,7 +112,7 @@ class DjangoSeleniumCleanTestCase(SeleniumTestCase):
         self.selenium.switch_to_window(self.selenium.window_handles[0])
 
     def test_exists(self):
-        self.selenium.get(self.live_server_url)
+        self._load_core_page()
 
         # Element with id=togglable does not exist. Check that the various
         # waits and asserts are ok.
@@ -138,7 +140,7 @@ class DjangoSeleniumCleanTestCase(SeleniumTestCase):
             self.togglable.wait_until_exists(timeout=1)
 
     def test_is_displayed(self):
-        self.selenium.get(self.live_server_url)
+        self._load_core_page()
 
         # Element with id=world is not displayed (but it exists). Check that
         # the various waits and asserts are ok.
@@ -178,7 +180,7 @@ class DjangoSeleniumCleanTestCase(SeleniumTestCase):
         self.assertFalse(self.heading_world.is_displayed())
 
     def test_contains(self):
-        self.selenium.get(self.live_server_url)
+        self._load_core_page()
 
         # Message does not contain 'world'. Check that the various waits
         # and asserts are OK.
@@ -224,8 +226,3 @@ class DjangoSeleniumCleanSkipTestCase(TestCase):
         # use case because the Selenium test might be skipped). Therefore the
         # "executing" of the test case should raise no error.
         instance()
-
-
-os.environ["DJANGO_SETTINGS_MODULE"] = "tests.settings"
-django.setup()
-management.call_command("migrate")
