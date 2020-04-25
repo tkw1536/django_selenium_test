@@ -55,7 +55,6 @@ class ElementFindMixins(DummyTestBase):
         if timeout is None:
             timeout = self.__class__.find_element_timeout
         if selector is None:
-            print(self.__class__.find_element_selector)
             if self.__class__.find_element_selector is None:
                 raise Exception("find_element_selector may not be None")
             selector = self.__class__.find_element_selector

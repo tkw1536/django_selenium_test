@@ -1,3 +1,7 @@
+1.0.3
+------------------
+- Remove leftover print() statement
+
 1.0.2
 ------------------
 - Support for Django 3.0
