@@ -1,5 +1,6 @@
 1.0.3
 ------------------
+- Trigger native 'input' and 'change' events when programatically setting value
 - Remove leftover print() statement
 
 1.0.2

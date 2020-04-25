@@ -169,8 +169,17 @@ class FormElementMixins(DummyTestBase):
         if script_value is not None:
             for id_, value in script_value.items():
                 element = self.selenium.find_element_by_id(id_)
+
                 self.selenium.execute_script(
-                    "arguments[0].value = arguments[1];", element, value
+                    # update the value in the DOM
+                    "arguments[0].value = arguments[1];" +
+                    # tell input event handlers this happened
+                    "arguments[0].dispatchEvent(new Event('input',{bubbles: true,cancelable: true}));"
+                    +
+                    # tell change event handlers this happened
+                    "arguments[0].dispatchEvent(new Event('change',{bubbles: true,cancelable: true}));",
+                    element,
+                    value,
                 )
 
         # return the button
