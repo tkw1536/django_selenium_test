@@ -1,3 +1,7 @@
+1.1.0
+------------------
+- Add 'get_url_download' method
+
 1.0.3
 ------------------
 - Trigger native 'input' and 'change' events when programatically setting value

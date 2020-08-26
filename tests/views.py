@@ -29,6 +29,15 @@ class SampleFormView(FormView):
 
 class DownloadView(View):
     def post(self, request: HTTPRequest) -> HttpResponse:
-        response = HttpResponse("content of example.txt", content_type="plain/text")
+        response = HttpResponse(
+            "content of example.txt, but via post", content_type="plain/text"
+        )
+        response["Content-Disposition"] = "inline; filename=example.txt"
+        return response
+
+    def get(self, request: HttpRequest) -> HttpResponse:
+        response = HttpResponse(
+            "content of example.txt, but via get", content_type="plain/text"
+        )
         response["Content-Disposition"] = "inline; filename=example.txt"
         return response

@@ -107,7 +107,12 @@ class ExampleIntegrationTest(IntegrationTest):
         # submitting a download form and getting the content
         ok, data = self.get_form_download(self.find_element("#input_id_download"))
         self.assertEqual(ok, True)
-        self.assertEqual(data, b"content of example.txt")
+        self.assertEqual(data, b"content of example.txt, but via post")
+
+        # downloading a file via url
+        ok2, data2 = self.get_url_download("integrationdownload")
+        self.assertEqual(ok2, True)
+        self.assertEqual(data2, b"content of example.txt, but via get")
 
         # hover an element
         self.hover_element("hoverable")

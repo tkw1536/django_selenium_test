@@ -215,37 +215,36 @@ class FormElementMixins(DummyTestBase):
         """
         )
 
-    def get_form_download(self, form: WebElement) -> [bool, IO[bytes]]:
-        """ Virtually submits a form and intercepts the resulting downloaded file as a BytesIO """
+    def __intercept_xhr(self, code: str, *args: Any) -> [bool, IO[bytes]]:
+        """ Creates and then executes a script that
+        programatically intercepts the provided file download. 
+        'code' should be a javascript code calling init_xhr_intercept() with appropriate functions. """
+
         self.selenium.execute_script(
             """
-        window.xhr_done = false;
-        window.xhr_ok = null;
-        window.xhr_data = null;
+window.xhr_done = false;
+window.xhr_ok = null;
+window.xhr_data = null;
 
-        function create_form_xhr(form) {
-            const xhr = new XMLHttpRequest();
-            setup_xhr_handler(xhr);
-            const fd = new FormData(form);
-            xhr.open('POST', form.getAttribute('action') || window.location.href);
-            xhr.send(fd);
-            return xhr;
-        }
-        function setup_xhr_handler(xhr) {
-            xhr.responseType = 'blob';
-            xhr.onload = function() {
-                const reader  = new FileReader();
-                reader.onloadend = function() {
-                    window.xhr_data = reader.result;
-                    window.xhr_ok = xhr.status === 200;
-                    window.xhr_done = true;
-                };
-                reader.readAsDataURL(xhr.response);
-            };
-        }
-        create_form_xhr(arguments[0].form);
-        """,
-            form,
+function init_xhr_intercept(callback) {
+    const xhr = new XMLHttpRequest();
+
+    xhr.responseType = 'blob';
+    xhr.onload = function() {
+        const reader  = new FileReader();
+        reader.onloadend = function() {
+            window.xhr_data = reader.result;
+            window.xhr_ok = xhr.status === 200;
+            window.xhr_done = true;
+        };
+        reader.readAsDataURL(xhr.response);
+    };
+
+    callback(xhr);
+    return xhr;
+}"""
+            + code,
+            *args
         )
 
         xhr_done = False
@@ -262,6 +261,40 @@ class FormElementMixins(DummyTestBase):
             xhr_data = base64.b64decode(xhr_data)
 
         return xhr_ok, xhr_data
+
+    def get_url_download(
+        self,
+        url: str,
+        args: Optional[List[Any]] = None,
+        kwargs: Optional[Dict[str, Any]] = None,
+        get_params: Option[Dict[str, str]] = None,
+        reverse_get_params: Optional[Dict[str, Any]] = None,
+    ) -> [bool, IO[bytes]]:
+
+        return self.__intercept_xhr(
+            """
+            var url = arguments[0];
+            init_xhr_intercept(function(xhr){
+                xhr.open('GET', url);
+                xhr.send(null);
+            });
+        """,
+            self._resolve_url(url, args, kwargs, get_params, reverse_get_params),
+        )
+
+    def get_form_download(self, form: WebElement) -> [bool, IO[bytes]]:
+        """ Virtually submits a form and intercepts the resulting downloaded file as a BytesIO """
+        return self.__intercept_xhr(
+            """
+            var form = arguments[0].form;
+            init_xhr_intercept(function(xhr){
+                var fd = new FormData(form);
+                xhr.open('POST', form.getAttribute('action') || window.location.href);
+                xhr.send(fd);
+            });
+        """,
+            form,
+        )
 
     def hover_element(self, id_: str) -> WebElement:
         """ Hovers over an element with the given ID """
