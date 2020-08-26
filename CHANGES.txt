@@ -1,6 +1,7 @@
 1.1.0
 ------------------
 - Add 'get_url_download' method
+- Remove calls to deprecated methods
 
 1.0.3
 ------------------

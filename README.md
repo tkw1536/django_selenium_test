@@ -239,7 +239,7 @@ following additional methods:
 button_that_will_open_a_second_window.click()
 self.selenium.wait_until_n_windows(n=2, timeout=10)
 windows = self.selenium.window_handles
-self.selenium.switch_to_window(windows[1])
+self.selenium.switch_to.window(windows[1])
 # continue testing
 ```
 
