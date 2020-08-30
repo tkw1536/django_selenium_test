@@ -5,7 +5,7 @@
 ![Status](https://img.shields.io/pypi/status/django-selenium-test.svg)
 [![Latest version](https://img.shields.io/pypi/v/django-selenium-test.svg)](https://pypi.python.org/pypi/django-selenium-test)
 
-Write Selenium tests on Django 2.x and Djano 3.0 and Python 3.8. 
+Write Selenium tests on Django 2.x, Django 3.0, Django 3.1 and Python 3.8. 
 Based on [django-selenium-clean](https://github.com/aptiko/django-selenium-clean). 
 
 This documentation is currently a work-in-progress. 
