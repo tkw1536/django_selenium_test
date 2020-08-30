@@ -23,7 +23,7 @@ install:
 script:
  - black --check .
  - isort --check-only --diff *.py django_selenium_test tests
- - coverage run --include="./*" --omit="./tests/*" setup.py test
+ - python tests/manage.py test
 
 _firefox_job: &firefox_job
   addons:
