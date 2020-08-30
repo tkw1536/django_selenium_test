@@ -16,8 +16,10 @@ from selenium.webdriver.support.ui import Select, WebDriverWait
 from .core import SeleniumTestCase
 
 if TYPE_CHECKING:
-    from typing import Optional, Type, Any, List, Dict, Union, IO
+    from typing import IO, Any, Dict, List, Optional, Type, Union
+
     from django.contrib.auth.models import User
+
     from django_selenium_clean import SeleniumWrapper
     from selenium.webdriver.remote.webelement import WebElement
 

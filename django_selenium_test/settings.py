@@ -7,7 +7,7 @@ from selenium.webdriver.chrome.options import Options as ChromeOptions
 from selenium.webdriver.firefox.options import Options as FirefoxOptions
 
 if TYPE_CHECKING:
-    from typing import List, Dict, Any
+    from typing import Any, Dict, List
 
 
 def make_chrome_driver(

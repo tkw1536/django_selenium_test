@@ -15,9 +15,11 @@ from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.support.ui import WebDriverWait
 
 if TYPE_CHECKING:
-    from typing import Optional, Any
-    from selenium.webdriver.remote.webdriver import WebDriver
+    from typing import Any, Optional
+
     from django.contrib.auth.models import AbstractUser
+
+    from selenium.webdriver.remote.webdriver import WebDriver
 
 
 class SeleniumWrapper(object):
