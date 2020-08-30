@@ -1,0 +1,48 @@
+name: CI
+
+on: [push]
+
+jobs:
+  test:
+    name: ${{ matrix.browser }} / Python ${{ matrix.python }} / Django ${{ matrix.django }} / 
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        python: ['3.8']
+        django: ['>=2.0,<2.1', '>=2.1,<2.2', '>=2.2,<3', '>=3.0,<3.1', '>=3.1,<3.2']
+        browser: ['chrome', 'firefox']
+
+    steps:
+    - uses: actions/checkout@v2
+    - name: Install Python ${{ matrix.python }}
+      uses: actions/setup-python@v1
+      with:
+        python-version: ${{ matrix.python }}
+
+    - name: Install Chrome Webdriver
+      if: ${{ matrix.browser == 'chrome' }}
+      run: |
+        pip install seleniumbase
+        sudo apt-get install -y google-chrome-stable
+        seleniumbase install chromedriver
+    - name: Install Firefox Webdriver
+      if: ${{ matrix.browser == 'firefox' }}
+      run: |
+        pip install seleniumbase
+        sudo apt-get install -y firefox
+        seleniumbase install geckodriver
+
+    - name: Install Dependencies for Django ${{ matrix.django }}
+      run: |
+        pip install "Django${{ matrix.django }}"
+        pip install -e .
+        pip install -r requirements-dev.txt
+
+    - name: Lint Python Code
+      run: |
+        black --check .
+        isort --check-only --diff *.py django_selenium_test tests
+    - name: Run Tests
+      run: python tests/manage.py test
+      env:
+        SELENIUM_WEBDRIVER: ${{ matrix.browser }}

@@ -1,7 +1,6 @@
 # django-selenium-test
 
-[![Build button](https://travis-ci.com/tkw1536/django_selenium_test.svg?branch=main)](https://travis-ci.com/tkw1536/django_selenium_test/)
-![License](https://img.shields.io/pypi/l/django-selenium-test.svg)
+![CI Status](https://github.com/tkw1536/django_selenium_test/workflows/CI/badge.svg)
 ![Status](https://img.shields.io/pypi/status/django-selenium-test.svg)
 [![Latest version](https://img.shields.io/pypi/v/django-selenium-test.svg)](https://pypi.python.org/pypi/django-selenium-test)
 
