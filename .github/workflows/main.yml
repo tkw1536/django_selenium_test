@@ -22,15 +22,28 @@ jobs:
     - name: Install Chrome Webdriver
       if: ${{ matrix.browser == 'chrome' }}
       run: |
+        python3 -m venv venv
+        source venv/bin/activate
+
         pip install seleniumbase
         sudo apt-get install -y google-chrome-stable
         seleniumbase install chromedriver
+
+        deactivate
+        rm -rf venv
     - name: Install Firefox Webdriver
       if: ${{ matrix.browser == 'firefox' }}
       run: |
-        pip install seleniumbase
+        python3 -m venv venv
+        source venv/bin/activate
+
         sudo apt-get install -y firefox
+        
+        pip install seleniumbase
         seleniumbase install geckodriver
+
+        deactivate
+        rm -rf venv
 
     - name: Install Dependencies for Django ${{ matrix.django }}
       run: |
