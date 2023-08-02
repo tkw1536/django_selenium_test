@@ -151,7 +151,7 @@ class FormElementMixins(DummyTestBase):
         # send_keys to the specified form elements
         if send_form_keys is not None:
             for id_, value in send_form_keys.items():
-                element = self.selenium.find_element_by_id(id_)
+                element = self.selenium.find_element(By.ID, id_)
                 element.clear()
                 element.send_keys(value)
 
@@ -163,14 +163,14 @@ class FormElementMixins(DummyTestBase):
         # select the checkboxes
         if select_checkboxes is not None:
             for id_, value in select_checkboxes.items():
-                checkbox = self.selenium.find_element_by_id(id_)
+                checkbox = self.selenium.find_element(By.ID, id_)
                 if checkbox.is_selected() != value:
                     checkbox.click()
 
         # set the scripted values
         if script_value is not None:
             for id_, value in script_value.items():
-                element = self.selenium.find_element_by_id(id_)
+                element = self.selenium.find_element(By.ID, id_)
 
                 self.selenium.execute_script(
                     # update the value in the DOM
@@ -300,7 +300,7 @@ function init_xhr_intercept(callback) {
 
     def hover_element(self, id_: str) -> WebElement:
         """Hovers over an element with the given ID"""
-        element = self.selenium.find_element_by_id(id_)
+        element = self.selenium.find_element(By.ID, id_)
 
         hover = ActionChains(self.selenium).move_to_element(element)
         hover.perform()
@@ -314,7 +314,7 @@ function init_xhr_intercept(callback) {
 
         # if we don't have an element, select it by selector
         if isinstance(id_or_element, str):
-            id_or_element = self.selenium.find_element_by_id(id_or_element)
+            id_or_element = self.selenium.find_element(By.ID, id_or_element)
 
         select = Select(id_or_element)
 
