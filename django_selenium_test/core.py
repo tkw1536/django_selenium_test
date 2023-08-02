@@ -58,21 +58,19 @@ class SeleniumWrapper(object):
     def __getattr__(self, name: str) -> Any:
         # always natively get the driver attribute!
         if name == "driver":
-            return getattr(super(SeleniumWrapper, self), name)
+            return getattr(super(), name)
 
         return getattr(self.driver, name)
 
     def __setattr__(self, name: str, value: Any) -> None:
         if name == "driver":
-            super(SeleniumWrapper, self).__setattr__(name, value)
+            super().__setattr__(name, value)
             return
 
         setattr(self.driver, name, value)
 
     def __bool__(self) -> bool:
         return bool(self.driver)
-
-    __nonzero__ = __bool__  # Python 2 compatibility
 
     def login(self, **credentials: Any) -> bool:
         """
@@ -217,7 +215,7 @@ class SeleniumTestCase(StaticLiveServerTestCase):
 
     @classmethod
     def setUpClass(cls) -> None:
-        super(SeleniumTestCase, cls).setUpClass()
+        super().setUpClass()
         cls.selenium = SeleniumWrapper()
         PageElement.selenium = cls.selenium
 
