@@ -11,7 +11,6 @@ from django_selenium_test import PageElement, SeleniumTestCase
 
 
 class DjangoSeleniumCleanTestCase(SeleniumTestCase):
-
     heading_earth = PageElement(By.ID, "earth")
     heading_world = PageElement(By.ID, "world")
     user_info = PageElement(By.ID, "user")

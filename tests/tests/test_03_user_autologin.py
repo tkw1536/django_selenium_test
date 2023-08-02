@@ -9,7 +9,6 @@ class ExampleIntegrationTest(IntegrationTest):
     user = "alice"
 
     def setUp(self):
-
         # crate the alice user
         from django.contrib.auth.hashers import make_password
         from django.contrib.auth.models import User
@@ -22,7 +21,7 @@ class ExampleIntegrationTest(IntegrationTest):
         super().setUp()
 
     def test_auto_login(self):
-        """ Checks that the user was actually logged in """
+        """Checks that the user was actually logged in"""
 
         element = self.load_live_url("core", selector="#user")
         self.assertEqual(element.text, "The logged on user is alice.")

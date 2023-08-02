@@ -13,7 +13,7 @@ if TYPE_CHECKING:
 
 
 def cleaned_data_check(data: dict) -> None:
-    """ Function that doesn't do anythingbut is mocked by integration tests to check if cleaned_data is right """
+    """Function that doesn't do anythingbut is mocked by integration tests to check if cleaned_data is right"""
     pass
 
 

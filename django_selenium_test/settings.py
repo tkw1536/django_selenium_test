@@ -13,7 +13,7 @@ if TYPE_CHECKING:
 def make_chrome_driver(
     args: List[Any], kwargs: Dict[str, Any], headless=False
 ) -> Dict[str, Any]:
-    """ Makes a new chrome driver settings instance """
+    """Makes a new chrome driver settings instance"""
     kwargs.update({"options": _make_chrome_options(headless)})
 
     return {
@@ -24,7 +24,7 @@ def make_chrome_driver(
 
 
 def _make_chrome_options(headless: bool) -> ChromeOptions:
-    """ Creates a new options instance for the chrome webdriver """
+    """Creates a new options instance for the chrome webdriver"""
     chrome_options = ChromeOptions()
     if headless:
         chrome_options.add_argument("--headless")
@@ -34,7 +34,7 @@ def _make_chrome_options(headless: bool) -> ChromeOptions:
 def make_firefox_driver(
     args: List[Any], kwargs: Dict[str, Any], headless=False
 ) -> Dict[str, Any]:
-    """ Makes a new chrome driver settings instance """
+    """Makes a new chrome driver settings instance"""
     kwargs.update({"options": _make_firefox_options(headless)})
 
     return {
@@ -45,7 +45,7 @@ def make_firefox_driver(
 
 
 def _make_firefox_options(headless: bool) -> FirefoxOptions:
-    """ Creates a new options instance for the firefox webdriver """
+    """Creates a new options instance for the firefox webdriver"""
     firefox_options = FirefoxOptions()
     if headless:
         firefox_options.add_argument("--headless")

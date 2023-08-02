@@ -89,7 +89,7 @@ class SeleniumWrapper(object):
         provided. The authenticate() function called by login() normally
         annotates the user like this.
 
-        The code is based on https://github.com/feffe/django-selenium-login/blob/master/seleniumlogin/__init__.py. 
+        The code is based on https://github.com/feffe/django-selenium-login/blob/master/seleniumlogin/__init__.py.
         """
 
         # The original code was licensed under:
@@ -199,7 +199,6 @@ class SeleniumTestCase(StaticLiveServerTestCase):
 
     @classmethod
     def setUpClass(cls) -> None:
-
         super(SeleniumTestCase, cls).setUpClass()
         cls.selenium = SeleniumWrapper()
         PageElement.selenium = cls.selenium
@@ -216,7 +215,6 @@ class SeleniumTestCase(StaticLiveServerTestCase):
 
     @classmethod
     def tearDownClass(cls) -> None:
-
         cls.selenium.quit()
         PageElement.selenium = None
         super().tearDownClass()
@@ -229,7 +227,6 @@ class SeleniumTestCase(StaticLiveServerTestCase):
 
 
 class PageElement(object):
-
     selenium: Optional[WebDriver] = None
 
     def __init__(self, *args: Any) -> None:

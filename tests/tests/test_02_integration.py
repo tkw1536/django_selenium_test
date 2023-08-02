@@ -6,11 +6,10 @@ from django_selenium_test import IntegrationTest
 
 
 class ExampleIntegrationTest(IntegrationTest):
-
     find_element_selector = "main"
 
     def test_element_mixins(self) -> None:
-        """ Checks that the element mixins work as intended """
+        """Checks that the element mixins work as intended"""
 
         self.load_live_url("integration")
 
@@ -27,7 +26,7 @@ class ExampleIntegrationTest(IntegrationTest):
         )
 
     def test_element_assertions(self) -> None:
-        """ Checks that the element assertions work as intended """
+        """Checks that the element assertions work as intended"""
 
         self.load_live_url("integration")
 
@@ -39,7 +38,6 @@ class ExampleIntegrationTest(IntegrationTest):
         self.assert_element_not_displayed("#not_exists")
 
     def test_urls(self) -> None:
-
         # check that load_live_url and assert_url_equal work
         self.load_live_url(
             "integrationparams",
@@ -57,7 +55,6 @@ class ExampleIntegrationTest(IntegrationTest):
 
     @mock.patch("tests.views.cleaned_data_check", return_value=1)
     def test_fill_form(self, cmock: mock.Mock) -> None:
-
         # fill in the form normally
         self.submit_form(
             "integration",

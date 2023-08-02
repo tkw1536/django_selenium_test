@@ -25,7 +25,7 @@ if TYPE_CHECKING:
 
 
 class DummyTestBase:
-    """ A dummy base class for type-hinting within integration tests """
+    """A dummy base class for type-hinting within integration tests"""
 
     selenium: SeleniumWrapper
     live_server_url: str
@@ -52,7 +52,7 @@ class ElementFindMixins(DummyTestBase):
     def find_element(
         self, selector: str, timeout: Optional[int] = None, clickable: bool = False
     ) -> WebElement:
-        """ Finds an element by a selector and waits for it to become available """
+        """Finds an element by a selector and waits for it to become available"""
 
         if timeout is None:
             timeout = self.__class__.find_element_timeout
@@ -71,7 +71,7 @@ class ElementFindMixins(DummyTestBase):
         return wait.until(condition((By.CSS_SELECTOR, selector)))
 
     def find_next_sibling(self, element: WebElement) -> Optional[WebElement]:
-        """ Finds the next sibling of an element """
+        """Finds the next sibling of an element"""
         return self.selenium.execute_script(
             "return arguments[0].nextElementSibling; ", element
         )
@@ -79,30 +79,30 @@ class ElementFindMixins(DummyTestBase):
 
 class ElementAssertionMixins(DummyTestBase):
     def _element_exists(self, selector: str) -> bool:
-        """ Checks if an element with the given selector exists on the page """
+        """Checks if an element with the given selector exists on the page"""
         return len(self.selenium.find_elements(By.CSS_SELECTOR, selector)) > 0
 
     def _element_displayed(self, selector: str) -> bool:
-        """ Checks if an element with a given selector exists and is displayed """
+        """Checks if an element with a given selector exists and is displayed"""
 
         for element in self.selenium.find_elements(By.CSS_SELECTOR, selector):
             return element.is_displayed()
         return False
 
     def assert_element_exists(self, selector: str, *args: Any) -> None:
-        """ Asserts that an element exists on the current page """
+        """Asserts that an element exists on the current page"""
         return self.assertTrue(self._element_exists(selector), *args)
 
     def assert_element_not_exists(self, selector: str, *args: Any) -> None:
-        """ Asserts that an element does not exist on the current page """
+        """Asserts that an element does not exist on the current page"""
         return self.assertFalse(self._element_exists(selector), *args)
 
     def assert_element_displayed(self, selector: str, *args: Any) -> None:
-        """ Asserts that an element with the given selector is displayed """
+        """Asserts that an element with the given selector is displayed"""
         return self.assertTrue(self._element_displayed(selector), *args)
 
     def assert_element_not_displayed(self, selector: str, *args: Any) -> None:
-        """ Asserts that an element with the given selector is not displayed """
+        """Asserts that an element with the given selector is not displayed"""
         return self.assertFalse(self._element_displayed(selector), *args)
 
 
@@ -122,15 +122,15 @@ class FormElementMixins(DummyTestBase):
         selector_timeout: Optional[int] = None,
     ) -> WebElement:
         """
-            Loads a URL using selenium from the live server and waits for the element with the submit_button id to be
-            available.
-            Once available, uses send_keys to send strings to elements with ids as specificed by send_form_keys dict.
-            Next, selects either one item by visible text, or muliple items by value, in dropdowns specified by the
-            select_dropdowns element.
-            Next, sets the selection state of checkboxes of elements with ids as specified by the select_checkboxes
-            dict.
-            Next, directly set the value attribute of elements refered to by the script_value dict.
-            Finally returns the button element.
+        Loads a URL using selenium from the live server and waits for the element with the submit_button id to be
+        available.
+        Once available, uses send_keys to send strings to elements with ids as specificed by send_form_keys dict.
+        Next, selects either one item by visible text, or muliple items by value, in dropdowns specified by the
+        select_dropdowns element.
+        Next, sets the selection state of checkboxes of elements with ids as specified by the select_checkboxes
+        dict.
+        Next, directly set the value attribute of elements refered to by the script_value dict.
+        Finally returns the button element.
         """
         if submit_button is None:
             selector = None
@@ -192,9 +192,9 @@ class FormElementMixins(DummyTestBase):
         *args: Any,
         next_selector: Optional[str] = None,
         selector_timeout: Optional[int] = None,
-        **kwargs: Any
+        **kwargs: Any,
     ) -> WebElement:
-        """ Fills out and submit a form, then returns the body element of the submitted page """
+        """Fills out and submit a form, then returns the body element of the submitted page"""
 
         # fill out the form and click the submit button
         button = self.fill_out_form(*args, selector_timeout=selector_timeout, **kwargs)
@@ -218,9 +218,10 @@ class FormElementMixins(DummyTestBase):
         )
 
     def __intercept_xhr(self, code: str, *args: Any) -> [bool, IO[bytes]]:
-        """ Creates and then executes a script that
-        programatically intercepts the provided file download. 
-        'code' should be a javascript code calling init_xhr_intercept() with appropriate functions. """
+        """Creates and then executes a script that
+        programatically intercepts the provided file download.
+        'code' should be a javascript code calling init_xhr_intercept() with appropriate functions.
+        """
 
         self.selenium.execute_script(
             """
@@ -246,7 +247,7 @@ function init_xhr_intercept(callback) {
     return xhr;
 }"""
             + code,
-            *args
+            *args,
         )
 
         xhr_done = False
@@ -272,7 +273,6 @@ function init_xhr_intercept(callback) {
         get_params: Option[Dict[str, str]] = None,
         reverse_get_params: Optional[Dict[str, Any]] = None,
     ) -> [bool, IO[bytes]]:
-
         return self.__intercept_xhr(
             """
             var url = arguments[0];
@@ -285,7 +285,7 @@ function init_xhr_intercept(callback) {
         )
 
     def get_form_download(self, form: WebElement) -> [bool, IO[bytes]]:
-        """ Virtually submits a form and intercepts the resulting downloaded file as a BytesIO """
+        """Virtually submits a form and intercepts the resulting downloaded file as a BytesIO"""
         return self.__intercept_xhr(
             """
             var form = arguments[0].form;
@@ -299,7 +299,7 @@ function init_xhr_intercept(callback) {
         )
 
     def hover_element(self, id_: str) -> WebElement:
-        """ Hovers over an element with the given ID """
+        """Hovers over an element with the given ID"""
         element = self.selenium.find_element_by_id(id_)
 
         hover = ActionChains(self.selenium).move_to_element(element)
@@ -310,7 +310,7 @@ function init_xhr_intercept(callback) {
     def select_dropdown(
         self, id_or_element: Union[str, WebElement], value: str
     ) -> Select:
-        """ Selects text of a dropdown by value """
+        """Selects text of a dropdown by value"""
 
         # if we don't have an element, select it by selector
         if isinstance(id_or_element, str):
@@ -347,7 +347,7 @@ class URLMixins(DummyTestBase):
         get_params: Option[Dict[str, str]] = None,
         reverse_get_params: Optional[Dict[str, Any]] = None,
     ) -> str:
-        """ Resolves a url pattern into an actual url """
+        """Resolves a url pattern into an actual url"""
 
         # If it's an absolute url, the test case is wrong
         if url.startswith("/"):
@@ -370,7 +370,7 @@ class URLMixins(DummyTestBase):
         # reversed get params
         if reverse_get_params is not None:
             has_extra_args = True
-            for (k, v) in reverse_get_params.items():
+            for k, v in reverse_get_params.items():
                 extra_args[k] = reverse(v)
 
         # if we had some extra arguments
@@ -386,7 +386,7 @@ class URLMixins(DummyTestBase):
 
     @property
     def _current_url(self) -> str:
-        """ The current url of the server relative to the root """
+        """The current url of the server relative to the root"""
 
         url = str(self.selenium.current_url)
         if url.startswith(self.live_server_url):
@@ -405,8 +405,8 @@ class URLMixins(DummyTestBase):
         selector_clickable: bool = False,
     ) -> WebElement:
         """
-            Loads an url from the selenium from the live server and waits for the CSS selector (if any) to be available
-            Returns the element selected, None if none is selected, or raises TimeoutException if a timeout occurs.
+        Loads an url from the selenium from the live server and waits for the CSS selector (if any) to be available
+        Returns the element selected, None if none is selected, or raises TimeoutException if a timeout occurs.
         """
 
         # resolve the url and load it
@@ -425,7 +425,7 @@ class URLMixins(DummyTestBase):
         )
 
     def assert_url_equal(self, url: str, *args: Any, **kwargs: Any) -> None:
-        """ Asserts that the current url is equal to the (pontially resolvable) url """
+        """Asserts that the current url is equal to the (pontially resolvable) url"""
 
         got = self._current_url
         expected = self._resolve_url(url, **kwargs)
@@ -443,10 +443,10 @@ class URLMixins(DummyTestBase):
         new_url_kwargs=None,
         new_url_reverse_get_params=None,
         url_selector: str = None,
-        url_selector_timeout: int = None
+        url_selector_timeout: int = None,
     ):
         """
-            Asserts that loading url (with selector selector) in the browser redirects to new_url. 
+        Asserts that loading url (with selector selector) in the browser redirects to new_url.
         """
 
         # load the url
@@ -465,7 +465,7 @@ class URLMixins(DummyTestBase):
             args=new_url_args,
             kwargs=new_url_kwargs,
             reverse_get_params=new_url_reverse_get_params,
-            *args
+            *args,
         )
 
 
@@ -476,7 +476,7 @@ class IntegrationTestBase(
     URLMixins,
     DummyTestBase,
 ):
-    """ A base class for integration tests """
+    """A base class for integration tests"""
 
     user: Optional[User] = None
     selenium: SeleniumWrapper = None
@@ -486,7 +486,7 @@ class IntegrationTestBase(
     find_element_selector: str  # to be overwritten by subclass
 
     def login(self, username: str) -> User:
-        """ Authenticates the user with the given username and returns the user object """
+        """Authenticates the user with the given username and returns the user object"""
 
         # grab the instance of the user we want to login
         user = get_user_model().objects.get(username=username)
@@ -499,10 +499,10 @@ class IntegrationTestBase(
 
 
 class IntegrationTest(SeleniumTestCase, IntegrationTestBase):
-    """ An integration test base class using Selenium """
+    """An integration test base class using Selenium"""
 
     def setUp(self) -> None:
-        """ Setups up this test class """
+        """Setups up this test class"""
 
         # before each test case, we need to reset the cookies
         self.selenium.delete_all_cookies()
