@@ -24,11 +24,24 @@ if TYPE_CHECKING:
 
 class SeleniumWrapper(object):
     _instance = None
+    _init_done = None
+    _init_except = None  # was there an error while initializing?
     driver: WebDriver
 
     def __new__(cls, *args: Any, **kwargs: Any) -> SeleniumWrapper:
-        if not cls._instance:
-            cls._instance = super().__new__(cls, *args, **kwargs)
+        # if we aren't yet initialized, do it!
+        if not cls._init_done:
+            try:
+                cls._instance = super().__new__(cls, *args, **kwargs)
+            except Exception as e:
+                cls._init_except = e
+            cls._init_done = True
+
+        # if some error occurred, raise it!
+        if cls._init_except is not None:
+            raise cls._init_except
+
+        # return the instance
         return cls._instance
 
     def __init__(self) -> None:
@@ -43,13 +56,18 @@ class SeleniumWrapper(object):
         self.driver = callable(*args, **kwargs)
 
     def __getattr__(self, name: str) -> Any:
+        # always natively get the driver attribute!
+        if name == "driver":
+            return getattr(super(SeleniumWrapper, self), name)
+
         return getattr(self.driver, name)
 
     def __setattr__(self, name: str, value: Any) -> None:
         if name == "driver":
             super(SeleniumWrapper, self).__setattr__(name, value)
-        else:
-            setattr(self.driver, name, value)
+            return
+
+        setattr(self.driver, name, value)
 
     def __bool__(self) -> bool:
         return bool(self.driver)
