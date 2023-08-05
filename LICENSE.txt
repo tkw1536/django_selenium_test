@@ -1,4 +1,4 @@
-Copyright (C) 2020 Tom Wiesing
+Copyright (C) 2020-2023 Tom Wiesing
 
 Copyright (C) 2013-2015 Antonis Christofides
 
